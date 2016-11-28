@@ -21,14 +21,6 @@ or to install the development version:
 - ``pip install git+https://github.com/MSeifert04/numbamisc.git@master``
 
 
-Using conda
-^^^^^^^^^^^
-
-It can by installed with ``conda`` [2]_ from the ``conda-forge`` channel:
-
-- ``conda install -c conda-forge numbamisc``
-
-
 Manual installation
 ^^^^^^^^^^^^^^^^^^^
 

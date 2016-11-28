@@ -1,2 +1,4 @@
-# numbamisc
-Miscellaneous utilities based on numba and jinja
+numbamisc
+---------
+
+Miscellaneous utilities based on numba and jinja.
