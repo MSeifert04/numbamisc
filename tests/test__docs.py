@@ -9,4 +9,4 @@ import numbamisc
 
 
 def test_doctests():
-    doctest.run_docstring_examples(numbamisc.median_filter, {})
+    assert doctest.testmod(numbamisc._filters).failed == 0
