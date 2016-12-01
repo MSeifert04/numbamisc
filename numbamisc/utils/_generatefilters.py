@@ -1,6 +1,10 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-import jinja2
+
+import os
+
+if os.environ.get('READTHEDOCS') != 'True':
+    import jinja2
 
 
 __all__ = ['generate']
@@ -74,7 +78,7 @@ def img_idx_reflect(ii, n):
             ii = 2 * n - 1 - ii
     return ii"""
 
-_convolutiontemplate = jinja2.Template("""
+_convolutiontemplate = """
 @nb.njit(nogil=True, cache=True)
 def filter_{{mode}}_n{{ndim}}_{{out}}{{nan}}(image, kernel, mask):
     {% for i in range(ndim) %}
@@ -178,19 +182,18 @@ def filter_{{mode}}_n{{ndim}}_{{out}}{{nan}}(image, kernel, mask):
     return resdata, resmask
 
 filters[('{{mode}}', {{ndim}}, '{{out}}', bool('{{nan}}'))] = filter_{{mode}}_n{{ndim}}_{{out}}{{nan}}
-""")
+"""
 
 
 def generate(maxndim):
+    _tmpl = jinja2.Template(_convolutiontemplate)
     _ndim = range(1, maxndim + 1)
     _modes = ['median', 'wmedian', 'sum', 'mean', 'min', 'max']
     _out = ['ignore', 'nearest', 'wrap', 'reflect', 'mirror']
     _nan = ['_ignore_nan', '']
 
-    _funcs = [stripblanklines(_convolutiontemplate.render(ndim=ndim,
-                                                          mode=mode,
-                                                          out=out,
-                                                          nan=nan))
+    _funcs = [stripblanklines(_tmpl.render(ndim=ndim, mode=mode,
+                                           out=out, nan=nan))
               for mode in _modes
               for ndim in _ndim
               for out in _out
