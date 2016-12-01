@@ -3,26 +3,27 @@ from __future__ import (absolute_import, division, print_function,
 
 import os
 
-import numpy as np
-from scipy import ndimage as scipy_ndimage
-
-try:
-    from ._genfilters import filters
-except ImportError:
-    from .utils import generate
-
-    current_dir = os.path.dirname(__file__)
-    target_dir = current_dir
+if os.environ.get('READTHEDOCS') != 'True':
+    import numpy as np
+    from scipy import ndimage as scipy_ndimage
 
     try:
-        os.makedirs(target_dir)
-    except OSError:
-        pass
+        from ._genfilters import filters
+    except ImportError:
+        from .utils import generate
 
-    with open(os.path.join(target_dir, '_genfilters.py'), 'w') as fobj:
-        fobj.write(generate(maxndim=5))
+        current_dir = os.path.dirname(__file__)
+        target_dir = current_dir
 
-    from ._genfilters import filters
+        try:
+            os.makedirs(target_dir)
+        except OSError:
+            pass
+
+        with open(os.path.join(target_dir, '_genfilters.py'), 'w') as fobj:
+            fobj.write(generate(maxndim=5))
+
+        from ._genfilters import filters
 
 
 __all__ = ['median_filter', 'median_filter_weigthed',
@@ -30,7 +31,13 @@ __all__ = ['median_filter', 'median_filter_weigthed',
            'average_filter', 'sum_filter']
 
 
-ParameterNotSpecified = object()
+class ParameterNotSpecified(object):
+    def __str__(self):
+        return "'unspecified'"
+
+    __repr__ = __str__
+
+ParameterNotSpecified = ParameterNotSpecified()
 
 
 def _convert_to_native_bytorder(array):
@@ -153,7 +160,7 @@ def median_filter(data, kernel, mask=ParameterNotSpecified,
 
     See also
     --------
-    scipy.ndimage.median_filter : Fast n-dimensional convolution without masks.
+    scipy.ndimage.median_filter : the same without mask support.
 
     Examples
     --------
@@ -291,6 +298,10 @@ def min_filter(data, kernel, mask=ParameterNotSpecified,
 
     mask : :class:`~numpy.ndarray`
         The mask of the filtered array.
+
+    See also
+    --------
+    scipy.ndimage.minimum_filter : the same without mask support.
     """
     data, kernel, mask = _process_input(data, kernel, mask)
 
@@ -337,6 +348,10 @@ def max_filter(data, kernel, mask=ParameterNotSpecified,
 
     mask : :class:`~numpy.ndarray`
         The mask of the filtered array.
+
+    See also
+    --------
+    scipy.ndimage.maximum_filter : the same without mask support.
     """
     data, kernel, mask = _process_input(data, kernel, mask)
 
@@ -384,6 +399,10 @@ def sum_filter(data, kernel, mask=ParameterNotSpecified,
 
     mask : :class:`~numpy.ndarray`
         The mask of the filtered array.
+
+    See also
+    --------
+    scipy.ndimage.convolve : the same without mask support.
     """
     data, kernel, mask = _process_input(data, kernel, mask)
 

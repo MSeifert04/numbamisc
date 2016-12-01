@@ -22,6 +22,12 @@ arrays. However this imposes some restrictions as well:
 - The functions are slower because they cannot exploit common filter
   optimizations.
 
+.. note::
+   The filters have an artificial limit of 5 dimensions. If you need higher
+   dimensional support you can alter the ``numbamisc/_filters.py`` file.
+   There should be a line ``fobj.write(generate(maxndim=5))``, the
+   ``maxndim`` value restricts the maximum dimension of the functions.
+
 Masks
 ^^^^^
 

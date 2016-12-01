@@ -2,7 +2,10 @@ from setuptools import setup
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 
+import os
 import sys
+
+on_rtd = os.environ.get('READTHEDOCS') == 'True'
 
 
 def readme():
@@ -18,6 +21,8 @@ def version():
 
 needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
 pytest_runner = ['pytest-runner'] if needs_pytest else []
+
+dependencies = [] if on_rtd else ['numba', 'numpy', 'scipy', 'jinja2',]
 
 setup(name='numbamisc',
       version=version(),
@@ -51,11 +56,7 @@ setup(name='numbamisc',
           ],
 
       install_requires=[
-          'numba',
-          'numpy',
-          'scipy',
-          'jinja2',
-          ],
+          ] + dependencies,
 
       setup_requires=[
           ] + pytest_runner,
