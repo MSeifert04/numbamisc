@@ -119,48 +119,41 @@ def _process_input(data, kernel, mask):
 
 def median_filter(data, kernel, mask=ParameterNotSpecified,
                   mode='ignore', ignore_nan=False):
-    """Median based convolution of some data by ignoring masked values.
+    """Median filter ignoring masked and NaN values.
 
     Parameters
     ----------
     data : :class:`~numpy.ndarray`, :class:`~numpy.ma.MaskedArray`, \
 :class:`~astropy.nddata.NDData`
-        The data to convolve.
+        The data to filter.
 
-    kernel : :class:`~numpy.ndarray`, :class:`~astropy.convolution.Kernel`
-        The kernel for the convolution. One difference from normal convolution
-        is that the actual values of the kernel do not matter, except when it
-        is zero then it won't use the element for the median computation.
-        Each axis of the kernel must be odd.
+    kernel : :class:`int`, :class:`tuple`, :class:`~numpy.ndarray`, \
+:class:`~astropy.convolution.Kernel`
+        See main documentation for explanation.
+        The ``kernel`` is cast to ``dtype=bool`` before filtering.
 
     mask : :class:`~numpy.ndarray`, optional
-        Masked values in the ``data``. Elements where the mask is equivalent to
-        1 (also ``True``) are interpreted as masked and are ignored during the
-        convolution. If not given use the mask of the data or if it has no mask
-        either just use `scipy.ndimage.median_filter`.
+        Mask for the filter. If given an implicit mask by ``data`` is ignored.
+
+    mode : string, optional
+        How to treat values outside the ``data``.
+        Default is ``ignore``.
+
+    ignore_nan : bool, optional
+        Also ignore ``NaN`` values.
+        Default is ``False``.
 
     Returns
     -------
     filtered : :class:`~numpy.ndarray`
-        The median filtered array.
+        The filtered array.
+
+    mask : :class:`~numpy.ndarray`
+        The mask of the filtered array.
 
     See also
     --------
-    scipy.ndimage.median_filter : Fast n-dimensional convolution \
-        without masks.
-
-    Notes
-    -----
-    If the ``data`` parameter has a ``mask`` attribute then ``data.data``
-    is interpreted as ``data`` and ``array.mask`` as ``mask`` parameter.
-    This allows using :class:`~numpy.ma.MaskedArray` objects as ``data``
-    parameter.
-
-    If an explicit ``mask`` is given (even if it is ``None``) an implicit
-    mask is ignored.
-
-    No border handling is possible, if the kernel extends beyond the image
-    these *outside* values are treated as if they were masked.
+    scipy.ndimage.median_filter : Fast n-dimensional convolution without masks.
 
     Examples
     --------
@@ -192,27 +185,7 @@ def median_filter(data, kernel, mask=ParameterNotSpecified,
                [False, False, False],
                [False, False, False]], dtype=bool)
 
-    And another example::
-
-        >>> data = np.arange(27).reshape(3, 3, 3)
-        >>> data[0, 0, 0] = 10000
-        >>> mask = np.zeros((3, 3, 3))
-        >>> mask[0, 0, 0] = 1
-        >>> d, m = median_filter(data, np.ones((3, 3, 3)), mask)
-        >>> d
-        array([[[  9. ,   9. ,   7.5],
-                [  9. ,   9. ,   9. ],
-                [  9.5,  10. ,  10.5]],
-        <BLANKLINE>
-               [[ 12. ,  12. ,  12. ],
-                [ 13. ,  13.5,  13.5],
-                [ 14. ,  14.5,  15. ]],
-        <BLANKLINE>
-               [[ 15.5,  16. ,  16.5],
-                [ 17. ,  17.5,  18. ],
-                [ 18.5,  19. ,  19.5]]])
-
-    Explictly using kernel elements to zero excludes those elements for the
+    Explictly setting kernel elements to zero excludes those elements for the
     convolution::
 
         >>> data = np.ma.array([1, 1000, 2, 1], mask=[0, 1, 0, 0])
@@ -241,6 +214,38 @@ def median_filter(data, kernel, mask=ParameterNotSpecified,
 
 def median_filter_weigthed(data, kernel, mask=ParameterNotSpecified,
                            mode='ignore', ignore_nan=False):
+    """Weighted median filter ignoring masked and NaN values.
+
+    Parameters
+    ----------
+    data : :class:`~numpy.ndarray`, :class:`~numpy.ma.MaskedArray`, \
+:class:`~astropy.nddata.NDData`
+        The data to filter.
+
+    kernel : :class:`int`, :class:`tuple`, :class:`~numpy.ndarray`, \
+:class:`~astropy.convolution.Kernel`
+        See main documentation for explanation.
+        The ``kernel`` is cast to ``dtype=np.int_`` before filtering.
+
+    mask : :class:`~numpy.ndarray`, optional
+        Mask for the filter. If given an implicit mask by ``data`` is ignored.
+
+    mode : string, optional
+        How to treat values outside the ``data``.
+        Default is ``ignore``.
+
+    ignore_nan : bool, optional
+        Also ignore ``NaN`` values.
+        Default is ``False``.
+
+    Returns
+    -------
+    filtered : :class:`~numpy.ndarray`
+        The filtered array.
+
+    mask : :class:`~numpy.ndarray`
+        The mask of the filtered array.
+    """
     data, kernel, mask = _process_input(data, kernel, mask)
 
     if mask is None:
@@ -255,6 +260,38 @@ def median_filter_weigthed(data, kernel, mask=ParameterNotSpecified,
 
 def min_filter(data, kernel, mask=ParameterNotSpecified,
                mode='ignore', ignore_nan=False):
+    """Minimum filter ignoring masked and NaN values.
+
+    Parameters
+    ----------
+    data : :class:`~numpy.ndarray`, :class:`~numpy.ma.MaskedArray`, \
+:class:`~astropy.nddata.NDData`
+        The data to filter.
+
+    kernel : :class:`int`, :class:`tuple`, :class:`~numpy.ndarray`, \
+:class:`~astropy.convolution.Kernel`
+        See main documentation for explanation.
+        The ``kernel`` is cast to ``dtype=bool`` before filtering.
+
+    mask : :class:`~numpy.ndarray`, optional
+        Mask for the filter. If given an implicit mask by ``data`` is ignored.
+
+    mode : string, optional
+        How to treat values outside the ``data``.
+        Default is ``ignore``.
+
+    ignore_nan : bool, optional
+        Also ignore ``NaN`` values.
+        Default is ``False``.
+
+    Returns
+    -------
+    filtered : :class:`~numpy.ndarray`
+        The median filtered array.
+
+    mask : :class:`~numpy.ndarray`
+        The mask of the filtered array.
+    """
     data, kernel, mask = _process_input(data, kernel, mask)
 
     if mask is None:
@@ -269,6 +306,38 @@ def min_filter(data, kernel, mask=ParameterNotSpecified,
 
 def max_filter(data, kernel, mask=ParameterNotSpecified,
                mode='ignore', ignore_nan=False):
+    """Maximum filter ignoring masked and NaN values.
+
+    Parameters
+    ----------
+    data : :class:`~numpy.ndarray`, :class:`~numpy.ma.MaskedArray`, \
+:class:`~astropy.nddata.NDData`
+        The data to filter.
+
+    kernel : :class:`int`, :class:`tuple`, :class:`~numpy.ndarray`, \
+:class:`~astropy.convolution.Kernel`
+        See main documentation for explanation.
+        The ``kernel`` is cast to ``dtype=bool`` before filtering.
+
+    mask : :class:`~numpy.ndarray`, optional
+        Mask for the filter. If given an implicit mask by ``data`` is ignored.
+
+    mode : string, optional
+        How to treat values outside the ``data``.
+        Default is ``ignore``.
+
+    ignore_nan : bool, optional
+        Also ignore ``NaN`` values.
+        Default is ``False``.
+
+    Returns
+    -------
+    filtered : :class:`~numpy.ndarray`
+        The median filtered array.
+
+    mask : :class:`~numpy.ndarray`
+        The mask of the filtered array.
+    """
     data, kernel, mask = _process_input(data, kernel, mask)
 
     if mask is None:
@@ -283,6 +352,39 @@ def max_filter(data, kernel, mask=ParameterNotSpecified,
 
 def sum_filter(data, kernel, mask=ParameterNotSpecified,
                mode='ignore', ignore_nan=False):
+    """Summation filter ignoring masked and NaN values.
+
+    Parameters
+    ----------
+    data : :class:`~numpy.ndarray`, :class:`~numpy.ma.MaskedArray`, \
+:class:`~astropy.nddata.NDData`
+        The data to filter.
+
+    kernel : :class:`int`, :class:`tuple`, :class:`~numpy.ndarray`, \
+:class:`~astropy.convolution.Kernel`
+        See main documentation for explanation.
+        The kernel must not contain mixed signed values. Either all values
+        must be positive or all negative.
+
+    mask : :class:`~numpy.ndarray`, optional
+        Mask for the filter. If given an implicit mask by ``data`` is ignored.
+
+    mode : string, optional
+        How to treat values outside the ``data``.
+        Default is ``ignore``.
+
+    ignore_nan : bool, optional
+        Also ignore ``NaN`` values.
+        Default is ``False``.
+
+    Returns
+    -------
+    filtered : :class:`~numpy.ndarray`
+        The median filtered array.
+
+    mask : :class:`~numpy.ndarray`
+        The mask of the filtered array.
+    """
     data, kernel, mask = _process_input(data, kernel, mask)
 
     if mask is None:
@@ -295,6 +397,39 @@ def sum_filter(data, kernel, mask=ParameterNotSpecified,
 
 def average_filter(data, kernel, mask=ParameterNotSpecified,
                    mode='ignore', ignore_nan=False):
+    """Averaging filter ignoring masked and NaN values.
+
+    Parameters
+    ----------
+    data : :class:`~numpy.ndarray`, :class:`~numpy.ma.MaskedArray`, \
+:class:`~astropy.nddata.NDData`
+        The data to filter.
+
+    kernel : :class:`int`, :class:`tuple`, :class:`~numpy.ndarray`, \
+:class:`~astropy.convolution.Kernel`
+        See main documentation for explanation.
+        The kernel must not contain mixed signed values. Either all values
+        must be positive or all negative.
+
+    mask : :class:`~numpy.ndarray`, optional
+        Mask for the filter. If given an implicit mask by ``data`` is ignored.
+
+    mode : string, optional
+        How to treat values outside the ``data``.
+        Default is ``ignore``.
+
+    ignore_nan : bool, optional
+        Also ignore ``NaN`` values.
+        Default is ``False``.
+
+    Returns
+    -------
+    filtered : :class:`~numpy.ndarray`
+        The median filtered array.
+
+    mask : :class:`~numpy.ndarray`
+        The mask of the filtered array.
+    """
     data, kernel, mask = _process_input(data, kernel, mask)
 
     if mask is None:
