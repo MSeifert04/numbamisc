@@ -125,7 +125,7 @@ def _process_input(data, kernel, mask):
 
 
 def median_filter(data, kernel, mask=ParameterNotSpecified,
-                  mode='ignore', ignore_nan=False):
+                  mode='ignore', ignore_nan=True):
     """Median filter ignoring masked and NaN values.
 
     Parameters
@@ -148,7 +148,7 @@ def median_filter(data, kernel, mask=ParameterNotSpecified,
 
     ignore_nan : bool, optional
         Also ignore ``NaN`` values.
-        Default is ``False``.
+        Default is ``True``.
 
     Returns
     -------
@@ -220,7 +220,7 @@ def median_filter(data, kernel, mask=ParameterNotSpecified,
 
 
 def median_filter_weigthed(data, kernel, mask=ParameterNotSpecified,
-                           mode='ignore', ignore_nan=False):
+                           mode='ignore', ignore_nan=True):
     """Weighted median filter ignoring masked and NaN values.
 
     Parameters
@@ -243,7 +243,7 @@ def median_filter_weigthed(data, kernel, mask=ParameterNotSpecified,
 
     ignore_nan : bool, optional
         Also ignore ``NaN`` values.
-        Default is ``False``.
+        Default is ``True``.
 
     Returns
     -------
@@ -266,7 +266,7 @@ def median_filter_weigthed(data, kernel, mask=ParameterNotSpecified,
 
 
 def min_filter(data, kernel, mask=ParameterNotSpecified,
-               mode='ignore', ignore_nan=False):
+               mode='ignore', ignore_nan=True):
     """Minimum filter ignoring masked and NaN values.
 
     Parameters
@@ -289,7 +289,7 @@ def min_filter(data, kernel, mask=ParameterNotSpecified,
 
     ignore_nan : bool, optional
         Also ignore ``NaN`` values.
-        Default is ``False``.
+        Default is ``True``.
 
     Returns
     -------
@@ -316,7 +316,7 @@ def min_filter(data, kernel, mask=ParameterNotSpecified,
 
 
 def max_filter(data, kernel, mask=ParameterNotSpecified,
-               mode='ignore', ignore_nan=False):
+               mode='ignore', ignore_nan=True):
     """Maximum filter ignoring masked and NaN values.
 
     Parameters
@@ -339,7 +339,7 @@ def max_filter(data, kernel, mask=ParameterNotSpecified,
 
     ignore_nan : bool, optional
         Also ignore ``NaN`` values.
-        Default is ``False``.
+        Default is ``True``.
 
     Returns
     -------
@@ -366,7 +366,7 @@ def max_filter(data, kernel, mask=ParameterNotSpecified,
 
 
 def sum_filter(data, kernel, mask=ParameterNotSpecified,
-               mode='ignore', ignore_nan=False):
+               mode='ignore', ignore_nan=True):
     """Summation filter ignoring masked and NaN values.
 
     Parameters
@@ -390,7 +390,7 @@ def sum_filter(data, kernel, mask=ParameterNotSpecified,
 
     ignore_nan : bool, optional
         Also ignore ``NaN`` values.
-        Default is ``False``.
+        Default is ``True``.
 
     Returns
     -------
@@ -415,7 +415,7 @@ def sum_filter(data, kernel, mask=ParameterNotSpecified,
 
 
 def average_filter(data, kernel, mask=ParameterNotSpecified,
-                   mode='ignore', ignore_nan=False):
+                   mode='ignore', ignore_nan=True):
     """Averaging filter ignoring masked and NaN values.
 
     Parameters
@@ -439,7 +439,7 @@ def average_filter(data, kernel, mask=ParameterNotSpecified,
 
     ignore_nan : bool, optional
         Also ignore ``NaN`` values.
-        Default is ``False``.
+        Default is ``True``.
 
     Returns
     -------
