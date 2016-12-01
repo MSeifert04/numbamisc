@@ -1,4 +1,6 @@
 from setuptools import setup
+from setuptools.command.develop import develop
+from setuptools.command.install import install
 
 import sys
 
@@ -45,6 +47,7 @@ setup(name='numbamisc',
 
       packages=[
           'numbamisc',
+          'numbamisc.utils',
           ],
 
       install_requires=[
