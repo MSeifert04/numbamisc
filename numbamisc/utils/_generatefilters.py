@@ -76,7 +76,108 @@ def img_idx_reflect(ii, n):
             ii = -ii - 1
         elif ii >= n:
             ii = 2 * n - 1 - ii
-    return ii"""
+    return ii
+
+
+@nb.njit
+def _partition(A, low, high, k):
+    '''Function taken from numba source code and modified.
+
+    BSD licensed see numba license.
+    '''
+    if high - low < 6:
+        insertion_sort(A, low, high)
+        return k
+
+    mid = (low + high) >> 1
+    if A[mid] < A[low]:
+        A[low], A[mid] = A[mid], A[low]
+    if A[high] < A[mid]:
+        A[high], A[mid] = A[mid], A[high]
+        if A[mid] < A[low]:
+            A[low], A[mid] = A[mid], A[low]
+    pivot = A[mid]
+
+    A[high], A[mid] = A[mid], A[high]
+
+    i = low
+    for j in range(low, high):
+        if A[j] <= pivot:
+            A[i], A[j] = A[j], A[i]
+            i += 1
+
+    A[i], A[high] = A[high], A[i]
+    return i
+
+
+@nb.njit
+def _select(arry, k, low, high):
+    '''Function taken from numba source code and modified.
+
+    BSD licensed see numba license.
+    '''
+    i = _partition(arry, low, high, k)
+    while i != k:
+        if i < k:
+            low = i + 1
+            i = _partition(arry, low, high, k)
+        else:
+            high = i - 1
+            i = _partition(arry, low, high, k)
+    return arry[k]
+
+
+@nb.njit
+def _select_two(arry, k, low, high):
+    '''Function taken from numba source code and modified.
+
+    BSD licensed see numba license.
+    '''
+    while True:
+        i = _partition(arry, low, high, k)
+        if i < k:
+            low = i + 1
+        elif i > k + 1:
+            high = i - 1
+        elif i == k:
+            _select(arry, k + 1, i + 1, high)
+            break
+        else:  # i == k + 1
+            _select(arry, k, low, i - 1)
+            break
+
+    return arry[k], arry[k + 1]
+
+
+@nb.njit
+def median(temp_arry):
+    '''Function taken from numba source code and modified.
+
+    BSD licensed see numba license.
+
+    The original numba_median function copied the array and did not fallback
+    to insertion sort for short arrays. Therefore this slightly optimized
+    copy.
+    '''
+    n = temp_arry.size
+    low = 0
+    high = n - 1
+    half = n >> 1
+    if n & 1 == 0:
+        a, b = _select_two(temp_arry, half - 1, low, high)
+        return (a + b) / 2
+    else:
+        return _select(temp_arry, half, low, high)
+
+
+@nb.njit
+def insertion_sort(array, low, high):
+    for i in range(low + 1, high + 1):
+        j = i
+        while j > low and array[j] < array[j-1]:
+            array[j], array[j-1] = array[j-1], array[j]
+            j -= 1
+"""
 
 _convolutiontemplate = """
 @nb.njit(nogil=True, cache=True)
@@ -158,7 +259,7 @@ def filter_{{mode}}_n{{ndim}}_{{out}}{{nan}}(image, kernel, mask):
 
     {% if mode == 'median' %}
     {{ ' '*4*ndim }}if elements != 0:
-    {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = np.median(tmp[:elements])
+    {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = median(tmp[:elements])
     {% elif mode == 'min' %}
     {{ ' '*4*ndim }}if tmpmin is not None:
     {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = tmpmin
@@ -167,7 +268,7 @@ def filter_{{mode}}_n{{ndim}}_{{out}}{{nan}}(image, kernel, mask):
     {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = tmpmax
     {% elif mode == 'wmedian' %}
     {{ ' '*4*ndim }}if elements != 0:
-    {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = np.median(tmp[:elements])
+    {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = median(tmp[:elements])
     {% elif mode == 'sum' %}
     {{ ' '*4*ndim }}if div != 0.:
     {{ ' '*4*ndim }}    resdata[{% for i in range(0, ndim-1) %}i{{i}}, {% endfor %}i{{ndim-1}}] = acc / div * kernelsum
