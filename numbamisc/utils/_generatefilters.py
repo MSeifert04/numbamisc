@@ -165,7 +165,7 @@ def median(temp_arry):
     half = n >> 1
     if n & 1 == 0:
         a, b = _select_two(temp_arry, half - 1, low, high)
-        return (a + b) / 2
+        return (a + b) / 2.
     else:
         return _select(temp_arry, half, low, high)
 
